@@ -67,9 +67,9 @@ export default function UnfixedHero() {
           boostHeadingRef.current.innerHTML = headingSpanHTML
           
           // Spanize the description text
-          const descText = "To the storytellers, visionaries, and creators, if you seek a performer who breathes life into every frame with depth, grace, and unwavering dedication, let&apos;s bring your vision to life, together"
+          const descText = "To the storytellers, visionaries, and creators, if you\nseek a performer who breathes life into every frame with depth, grace, and unwavering dedication, let's bring your vision to life, together.."
           const descSpanHTML = descText.split('').map((letter) => 
-            letter === ' ' ? ' ' : `<span>${letter}</span>`
+            letter === ' ' ? ' ' : letter === '\n' ? '<br>' : `<span>${letter}</span>`
           ).join('')
           boostTextRef.current.innerHTML = descSpanHTML
 
@@ -77,59 +77,33 @@ export default function UnfixedHero() {
           const headingSpanElements = boostHeadingRef.current.querySelectorAll('span')
           const textSpanElements = boostTextRef.current.querySelectorAll('span')
           
-          gsap.set(headingSpanElements, {
-            opacity: 0,
-            textShadow: "0px 0px 1px rgba(255, 255, 255, 0.1)"
+          // Apply CSS animations similar to the reference code
+          headingSpanElements.forEach((span, index) => {
+            span.style.opacity = '0'
+            span.style.textShadow = '0px 0px 1px rgba(255, 255, 255, 0.1)'
+            span.style.animation = `letter-glow 0.7s ${index * 0.05}s ease both`
           })
           
-          gsap.set(textSpanElements, {
-            opacity: 0,
-            textShadow: "0px 0px 1px rgba(255, 255, 255, 0.1)"
+          textSpanElements.forEach((span, index) => {
+            span.style.opacity = '0'
+            span.style.textShadow = '0px 0px 1px rgba(255, 255, 255, 0.1)'
+            span.style.animation = `letter-glow 0.7s ${1.25 + (index * 0.05)}s ease both`
           })
 
-          // Create scroll trigger for animation
+          // Create scroll trigger to start animations when entering the section
           ScrollTrigger.create({
             trigger: boostSectionRef.current,
-            start: "top 70%",
+            start: "top 30%",
             toggleActions: "play none none none",
             once: true,
             onEnter: () => {
-              // Animate heading letters
-              gsap.to(headingSpanElements, {
-                opacity: 0.7,
-                textShadow: "0px 0px 20px rgba(255, 255, 255, 0.0)",
-                duration: 0.7,
-                ease: "power2.out",
-                stagger: 0.05,
-                keyframes: {
-                  "66%": {
-                    opacity: 1,
-                    textShadow: "0px 0px 20px rgba(255, 255, 255, 0.9)"
-                  },
-                  "77%": {
-                    opacity: 1
-                  }
-                }
-              })
-              
-              // Animate description text with delay
-              gsap.to(textSpanElements, {
-                opacity: 0.7,
-                textShadow: "0px 0px 20px rgba(255, 255, 255, 0.0)",
-                duration: 0.7,
-                ease: "power2.out",
-                stagger: 0.05,
-                delay: 1.25, // Start after heading animation
-                keyframes: {
-                  "66%": {
-                    opacity: 1,
-                    textShadow: "0px 0px 20px rgba(255, 255, 255, 0.9)"
-                  },
-                  "77%": {
-                    opacity: 1
-                  }
-                }
-              })
+              // Trigger animations by adding class
+              if (boostHeadingRef.current) {
+                boostHeadingRef.current.classList.add('animate')
+              }
+              if (boostTextRef.current) {
+                boostTextRef.current.classList.add('animate')
+              }
             }
           })
         }
@@ -245,11 +219,17 @@ export default function UnfixedHero() {
               style={{
                 fontFamily: "MontserratAlternates, Philosopher, serif",
                 textAlign: "center",
-                whiteSpace: "pre-wrap",
+                lineHeight: "1.6",
+                wordSpacing: "0.1em",
+                hyphens: "none",
+                wordBreak: "keep-all",
+                whiteSpace: "normal",
+                overflowWrap: "normal",
                 color: "#A47551" // hazelnut brown
               }}
             >
-              To the storytellers, visionaries, and creators, if you seek a performer who breathes life into every frame with depth, grace, and unwavering dedication, let&apos;s bring your vision to life, together
+              To the storytellers, visionaries, and creators, if you
+seek a performer who breathes life into every frame with depth, grace, and unwavering dedication, let&apos;s bring your vision to life, together..
             </p>
 
             {/* Scroll indicator */}

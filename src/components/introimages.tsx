@@ -23,23 +23,23 @@ export default function IntroImages() {
     
     if (!pinWrap || !sectionPin) return;
 
-    // Calculate the scroll distance more precisely to reach the last image
+    // Calculate the scroll distance to show all three images properly  
     const pinWrapWidth = pinWrap.scrollWidth;
-    const horizontalScrollLength = pinWrapWidth - window.innerWidth + (window.innerWidth * 0.1); // Add 10% buffer
+    const horizontalScrollLength = pinWrapWidth - window.innerWidth;
 
     const ctx = gsap.context(() => {
-      // Set initial states for text elements with namaste-style animation
+      // Set initial states for text elements - simple fade in
       gsap.set([sushriRef.current, sumanRef.current, ranaRef.current], {
         opacity: 0,
-        textShadow: "0px 0px 1px rgba(255, 255, 255, 0.1)"
+        y: 20
       });
 
       gsap.set(subtitleRef.current, {
         opacity: 0,
-        textShadow: "0px 0px 1px rgba(255, 255, 255, 0.1)"
+        y: 15
       });
 
-      // Namaste-style text reveal animation with glow effect
+      // Simple, elegant text reveal animation (no glow effect)
       const textRevealTl = gsap.timeline({
         scrollTrigger: {
           trigger: textContainerRef.current,
@@ -50,78 +50,41 @@ export default function IntroImages() {
         }
       });
 
-      // Animate each text element with glow effect like namaste animation
+      // Clean, subtle staggered reveal
       textRevealTl
         .to(sushriRef.current, {
-          opacity: 0.7,
-          textShadow: "0px 0px 20px rgba(255, 255, 255, 0.0)",
-          duration: 0.7,
-          ease: "power2.out",
-          keyframes: {
-            "66%": {
-              opacity: 1,
-              textShadow: "0px 0px 20px rgba(255, 255, 255, 0.9)"
-            },
-            "77%": {
-              opacity: 1
-            }
-          }
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out"
         })
         .to(sumanRef.current, {
-          opacity: 0.7,
-          textShadow: "0px 0px 20px rgba(255, 255, 255, 0.0)",
-          duration: 0.7,
-          ease: "power2.out",
-          keyframes: {
-            "66%": {
-              opacity: 1,
-              textShadow: "0px 0px 20px rgba(255, 255, 255, 0.9)"
-            },
-            "77%": {
-              opacity: 1
-            }
-          }
-        }, "-=0.5")
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out"
+        }, "-=0.6")
         .to(ranaRef.current, {
-          opacity: 0.7,
-          textShadow: "0px 0px 20px rgba(255, 255, 255, 0.0)",
-          duration: 0.7,
-          ease: "power2.out",
-          keyframes: {
-            "66%": {
-              opacity: 1,
-              textShadow: "0px 0px 20px rgba(255, 255, 255, 0.9)"
-            },
-            "77%": {
-              opacity: 1
-            }
-          }
-        }, "-=0.5")
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out"
+        }, "-=0.6")
         .to(subtitleRef.current, {
-          opacity: 0.7,
-          textShadow: "0px 0px 20px rgba(255, 255, 255, 0.0)",
-          duration: 0.7,
-          ease: "power2.out",
-          delay: 0.3,
-          keyframes: {
-            "66%": {
-              opacity: 1,
-              textShadow: "0px 0px 20px rgba(255, 255, 255, 0.9)"
-            },
-            "77%": {
-              opacity: 1
-            }
-          }
-        });
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out"
+        }, "-=0.3");
 
-      // Horizontal scroll animation with better end calculation
+      // Horizontal scroll animation
       const horizontalTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionPin,
           pin: true,
           scrub: 1,
           start: "top top",
-          end: () => `+=${horizontalScrollLength}`,
+          end: () => `+=${pinWrapWidth}`,
           invalidateOnRefresh: true,
           anticipatePin: 1,
         }
@@ -164,7 +127,7 @@ export default function IntroImages() {
           height: "100vh",
           padding: "0 5vw",
           gap: "5vw",
-          minWidth: "100vw",
+          minWidth: "350vw",
         }}
       >
         <div
@@ -193,8 +156,8 @@ export default function IntroImages() {
               fontFamily: "'Noto Serif Devanagari', 'Siddhanta', 'Uttara', serif",
               position: "relative",
               lineHeight: "1.1",
-              wordWrap: "break-word",
-              overflowWrap: "break-word",
+              whiteSpace: "nowrap",
+              wordBreak: "keep-all",
               maxWidth: "100%"
             }}
           >
@@ -246,11 +209,10 @@ export default function IntroImages() {
               textAlign: "justify",
               textJustify: "inter-word",
               lineHeight: "1.2",
-              wordWrap: "break-word",
-              overflowWrap: "break-word",
-              hyphens: "auto",
-              maxWidth: "100%",
-              whiteSpace: "normal"
+              wordSpacing: "normal",
+              whiteSpace: "nowrap",
+              wordBreak: "keep-all",
+              maxWidth: "100%"
             }}
           >
             Actor . Doctor . Entrepreneur
