@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { WavyBackground } from "@/components/ui/wavy-background"
+// ...existing code...
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -55,151 +57,79 @@ export default function UnfixedHero() {
           0,
         )
 
-        // BOOST section with wavy swipe transition
+        // Spanize text immediately but control animation with GSAP
         if (boostHeadingRef.current && boostTextRef.current) {
-          // Set initial states
-          gsap.set(boostHeadingRef.current, { 
-            y: 100, 
-            opacity: 0
+          // Spanize the heading
+          const headingText = "Namaste"
+          const headingSpanHTML = headingText.split('').map((letter) => 
+            `<span>${letter}</span>`
+          ).join('')
+          boostHeadingRef.current.innerHTML = headingSpanHTML
+          
+          // Spanize the description text
+          const descText = "To the storytellers, visionaries, and creators, if you seek a performer who breathes life into every frame with depth, grace, and unwavering dedication, let&apos;s bring your vision to life, together"
+          const descSpanHTML = descText.split('').map((letter) => 
+            letter === ' ' ? ' ' : `<span>${letter}</span>`
+          ).join('')
+          boostTextRef.current.innerHTML = descSpanHTML
+
+          // Set initial state - hide all spans
+          const headingSpanElements = boostHeadingRef.current.querySelectorAll('span')
+          const textSpanElements = boostTextRef.current.querySelectorAll('span')
+          
+          gsap.set(headingSpanElements, {
+            opacity: 0,
+            textShadow: "0px 0px 1px rgba(255, 255, 255, 0.1)"
           })
-          gsap.set(boostTextRef.current, { 
-            y: 80, 
-            opacity: 0
+          
+          gsap.set(textSpanElements, {
+            opacity: 0,
+            textShadow: "0px 0px 1px rgba(255, 255, 255, 0.1)"
           })
 
-          // Initial reveal animation
+          // Create scroll trigger for animation
           ScrollTrigger.create({
             trigger: boostSectionRef.current,
-            start: "top 50%",
+            start: "top 70%",
             toggleActions: "play none none none",
             once: true,
             onEnter: () => {
-              const boostTl = gsap.timeline()
-              
-              boostTl.to(boostHeadingRef.current, {
-                y: 0,
-                opacity: 1,
-                duration: 1.2,
-                ease: "power3.out",
+              // Animate heading letters
+              gsap.to(headingSpanElements, {
+                opacity: 0.7,
+                textShadow: "0px 0px 20px rgba(255, 255, 255, 0.0)",
+                duration: 0.7,
+                ease: "power2.out",
+                stagger: 0.05,
+                keyframes: {
+                  "66%": {
+                    opacity: 1,
+                    textShadow: "0px 0px 20px rgba(255, 255, 255, 0.9)"
+                  },
+                  "77%": {
+                    opacity: 1
+                  }
+                }
               })
               
-              boostTl.to(boostTextRef.current, {
-                y: 0,
-                opacity: 1,
-                duration: 1,
+              // Animate description text with delay
+              gsap.to(textSpanElements, {
+                opacity: 0.7,
+                textShadow: "0px 0px 20px rgba(255, 255, 255, 0.0)",
+                duration: 0.7,
                 ease: "power2.out",
-              }, "-=0.6")
-            }
-          })
-
-          // Wavy swipe transition with scroll direction awareness
-          let currentText = "Namaste"
-          let isTransitioning = false
-
-          ScrollTrigger.create({
-            trigger: boostSectionRef.current,
-            start: "top top",
-            end: "+=80%", // Reduced from 250% to 100% for faster transition
-            pin: true,
-            pinSpacing: true,
-            scrub: 1,
-            onUpdate: (self) => {
-              const progress = self.progress
-              const direction = self.direction // 1 for down, -1 for up
-              
-              if (!isTransitioning && boostHeadingRef.current) {
-                // Forward transition: Namaste → नमस्ते
-                if (progress > 0.6 && currentText === "Namaste" && direction === 1) {
-                  isTransitioning = true
-                  currentText = "नमस्ते"
-                  
-                  // Wavy swipe up animation
-                  gsap.to(boostHeadingRef.current, {
-                    y: -150,
-                    rotationX: -45,
-                    scale: 0.8,
-                    opacity: 0,
-                    duration: 0.6,
-                    ease: "power2.in",
-                    onComplete: () => {
-                      if (boostHeadingRef.current) {
-                        // Switch to Hindi
-                        boostHeadingRef.current.textContent = "नमस्ते"
-                        boostHeadingRef.current.style.fontFamily = "'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif"
-                        boostHeadingRef.current.style.color = "#ffffff"
-                        boostHeadingRef.current.style.background = "transparent"
-                        
-                        // Start from below with wave effect
-                        gsap.set(boostHeadingRef.current, {
-                          y: 150,
-                          rotationX: 45,
-                          scale: 0.8,
-                          opacity: 0
-                        })
-                        
-                        // Wavy entrance
-                        gsap.to(boostHeadingRef.current, {
-                          y: 0,
-                          rotationX: 0,
-                          scale: 1,
-                          opacity: 1,
-                          duration: 0.5,
-                          ease: "elastic.out(1, 0.6)",
-                          onComplete: () => {
-                            isTransitioning = false
-                          }
-                        })
-                      }
-                    }
-                  })
+                stagger: 0.05,
+                delay: 1.25, // Start after heading animation
+                keyframes: {
+                  "66%": {
+                    opacity: 1,
+                    textShadow: "0px 0px 20px rgba(255, 255, 255, 0.9)"
+                  },
+                  "77%": {
+                    opacity: 1
+                  }
                 }
-                
-                // Reverse transition: नमस्ते → Namaste
-                else if (progress < 0.4 && currentText === "नमस्ते" && direction === -1) {
-                  isTransitioning = true
-                  currentText = "Namaste"
-                  
-                  // Wavy swipe down animation (reverse)
-                  gsap.to(boostHeadingRef.current, {
-                    y: 150,
-                    rotationX: 45,
-                    scale: 0.8,
-                    opacity: 0,
-                    duration: 0.6,
-                    ease: "power2.in",
-                    onComplete: () => {
-                      if (boostHeadingRef.current) {
-                        // Switch to English
-                        boostHeadingRef.current.textContent = "Namaste"
-                        boostHeadingRef.current.style.fontFamily = "'Inter', 'Arial', sans-serif"
-                        boostHeadingRef.current.style.color = "#ffffff"
-                        boostHeadingRef.current.style.background = "transparent"
-                        
-                        // Start from above with wave effect
-                        gsap.set(boostHeadingRef.current, {
-                          y: -150,
-                          rotationX: -45,
-                          scale: 0.8,
-                          opacity: 0
-                        })
-                        
-                        // Wavy entrance from top
-                        gsap.to(boostHeadingRef.current, {
-                          y: 0,
-                          rotationX: 0,
-                          scale: 1,
-                          opacity: 1,
-                          duration: 0.5,
-                          ease: "elastic.out(1, 0.6)",
-                          onComplete: () => {
-                            isTransitioning = false
-                          }
-                        })
-                      }
-                    }
-                  })
-                }
-              }
+              })
             }
           })
         }
@@ -211,11 +141,21 @@ export default function UnfixedHero() {
     }
   }, [isLoaded])
 
+  if (!isLoaded) {
+    return (
+      <div className="h-[200vh] relative z-10" style={{backgroundColor: '#f5f0e8'}}>
+        <div className="h-screen sticky top-0 overflow-hidden z-30 flex items-center justify-center" style={{backgroundColor: '#f5f0e8'}}>
+          <div className="text-gray-700 text-xl opacity-60">Loading...</div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       {/* Hero Section with Image Animation */}
-      <div ref={heroContainerRef} className="h-[200vh] relative z-10 bg-[#181a1b]">
-        <section ref={heroSectionRef} className="h-screen sticky top-0 overflow-hidden bg-[#181a1b] z-30">
+      <div ref={heroContainerRef} className="h-[200vh] relative z-10" style={{backgroundColor: '#f5f0e8'}}>
+        <section ref={heroSectionRef} className="h-screen sticky top-0 overflow-hidden z-30" style={{backgroundColor: '#f5f0e8'}}>
           {/* Hero Image Container - Full viewport size */}
           <div className="absolute inset-0 z-0 overflow-hidden flex items-center justify-center">
             {/* Background Image Container with zoom-out effect and slices */}
@@ -244,7 +184,7 @@ export default function UnfixedHero() {
                     }}
                     className="absolute h-0"
                     style={{
-                      background: "#181a1b",
+                      background: "#f5f0e8",
                       transformOrigin: "bottom",
                       left:
                         index === 0
@@ -269,42 +209,60 @@ export default function UnfixedHero() {
       {/* BOOST Section - Hindi Heading Morphing on Scroll */}
       <section 
         ref={boostSectionRef}
-        className="min-h-screen bg-[#181a1b] text-white relative z-20 py-8 px-8 md:px-16 lg:px-24 flex items-center"
+        className="min-h-screen text-gray-900 relative z-20 py-8 px-4 sm:px-6 md:px-12 lg:px-24 flex items-center"
+        style={{backgroundColor: '#f5f0e8'}}
       >
-        <div className="max-w-7xl mx-auto">
+        <WavyBackground
+          backgroundFill="#f5f0e8"
+          colors={["#e6d7c3", "#d4c4b0", "#c2b49d", "#b0a48a", "#9e9477"]}
+          waveWidth={30}
+          blur={8}
+          speed="slow"
+          waveOpacity={0.3}
+          containerClassName="absolute inset-0"
+        />
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center">
-            {/* Morphing heading: Namaste → नमस्ते */}
-            <h2 
+            {/* Letter glow animated heading */}
+            <h1 
               ref={boostHeadingRef}
-              className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-16 tracking-tight leading-none pb-4"
+              className="mast__title text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black mb-10 sm:mb-14 md:mb-16 tracking-tight leading-none pb-4 break-words uppercase"
               style={{
-                textShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+                fontFamily: "Philosopher, serif",
+                letterSpacing: "0.3em",
                 textRendering: "optimizeLegibility",
-                minHeight: "120px"
+                minHeight: "80px",
+                color: "#4B2E19" // dark brown
               }}
             >
               Namaste
-            </h2>
+            </h1>
             
-            {/* Static subheading */}
+            {/* Letter glow animated text */}
             <p 
               ref={boostTextRef}
-              className="text-xl md:text-3xl lg:text-4xl text-gray-300 max-w-5xl leading-relaxed mx-auto"
+              className="mast__text text-base sm:text-lg md:text-2xl lg:text-4xl max-w-5xl leading-relaxed mx-auto px-1 sm:px-2"
               style={{
-                textAlign: "center"
+                fontFamily: "MontserratAlternates, Philosopher, serif",
+                textAlign: "center",
+                whiteSpace: "pre-wrap",
+                color: "#A47551" // hazelnut brown
               }}
             >
               To the storytellers, visionaries, and creators, if you seek a performer who breathes life into every frame with depth, grace, and unwavering dedication, let&apos;s bring your vision to life, together
             </p>
 
             {/* Scroll indicator */}
-            <div className="mt-16 opacity-60">
-              <div className="w-1 h-12 bg-white mx-auto rounded-full animate-pulse"></div>
-              <p className="text-sm mt-4 text-gray-400">Scroll to see the magic</p>
+            <div className="mt-10 sm:mt-12 md:mt-16 opacity-60">
+              <div className="w-1 h-8 sm:h-10 md:h-12 bg-white mx-auto rounded-full animate-pulse"></div>
+              <p className="text-xs sm:text-sm mt-3 sm:mt-4 text-gray-400">Scroll to see the magic</p>
             </div>
           </div>
         </div>
       </section>
+
+
+      {/* Horizontal scroll removed as requested */}
     </>
   )
 }

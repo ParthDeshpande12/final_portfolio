@@ -6,7 +6,7 @@ import { ArrowUpRight } from "lucide-react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "framer-motion"
-import Link from 'next/link';
+import Link from 'next/link'
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -187,24 +187,18 @@ export function ProjectsSection() {
   return (
     <section 
       ref={sectionRef} 
-      className="min-h-fit h-fit bg-black text-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
+      className="min-h-fit h-fit relative text-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
       data-scroll-section // Add data attribute for debugging
+      style={{backgroundColor: 'transparent'}}
+      id="features-section"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div ref={headerRef} className="mb-12 sm:mb-16 lg:mb-20">
-          <motion.div
-            className="h-0.5 bg-gray-700 mb-10 w-full origin-center"
-            initial={{ scaleX: 0, opacity: 0 }}
-            whileInView={{ scaleX: 1, opacity: 1 }}
-            style={{ transformOrigin: '50% 50%' }}
-            transition={{ duration: 1, ease: 'easeOut' }}
-            viewport={{ once: true }}
-          />
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6">
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6" style={{color: '#321414'}}>
             Featured Projects
           </h2>
-          <p className="text-2xl md:text-3xl font-light text-gray-300 max-w-3xl">
+          <p className="text-2xl md:text-3xl font-light max-w-3xl" style={{color: '#826644'}}>
             Discover my work in film, television, and brand partnerships
           </p>
         </div>
@@ -222,7 +216,8 @@ export function ProjectsSection() {
               >
                 {/* Project Image with Combined Effects */}
                 <div
-                  className="image-container relative rounded-lg sm:rounded-xl mb-4 sm:mb-5 aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] overflow-hidden group"
+                  className="image-container relative rounded-lg sm:rounded-xl mb-4 sm:mb-5 overflow-hidden group"
+                  style={{aspectRatio: '4/5', transform: 'scale(0.8)'}}
                   onMouseEnter={() => setHoveredProject(project.id)}
                   onMouseLeave={() => setHoveredProject(null)}
                 >
@@ -275,14 +270,14 @@ export function ProjectsSection() {
                 </div>
 
                 {/* Project Content */}
-                <div className="text-content">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">
+                <div className="text-content mt-4">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3" style={{color: '#321414'}}>
                     {project.title}
                   </h3>
-                  <p className="text-gray-400 text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed">
+                  <p className="text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed" style={{color: '#826644'}}>
                     {project.description}
                   </p>
-                  <div className="project-button inline-flex items-center gap-2 text-white hover:text-gray-300 transition-colors duration-200">
+                  <div className="project-button inline-flex items-center gap-2 transition-colors duration-200" style={{color: '#242124'}} onMouseEnter={(e) => e.currentTarget.style.color = '#826644'} onMouseLeave={(e) => e.currentTarget.style.color = '#242124'}>
                     <span className="text-sm sm:text-base font-medium">Learn More</span>
                     <ArrowUpRight className="w-4 h-4" />
                   </div>

@@ -83,10 +83,7 @@ const televisionCategories = [
 ]
 
 // List of available images from public/images
-const randomImages = [
-	"/images/1.jpg",
-	"/images/2.jpg",
-	"/images/3.jpg",
+const orderedImages = [
 	"/images/a.png",
 	"/images/b.png",
 	"/images/c.png",
@@ -94,18 +91,10 @@ const randomImages = [
 	"/images/e.png",
 	"/images/f.png",
 	"/images/g.png",
-	"/images/heading.png",
-	"/images/hero.jpg",
-	"/images/logo.svg",
-	"/images/portrait.png",
-	"/images/rays.png",
-	"/images/resized_1.jpg",
-	"/images/resized_2.jpg",
-	"/images/resized_3.jpg",
 ]
 
-function getRandomImage() {
-	return randomImages[Math.floor(Math.random() * randomImages.length)]
+function getOrderedImage(index: number) {
+	return orderedImages[index % orderedImages.length]
 }
 
 const slideVariants = {
@@ -184,34 +173,31 @@ export default function TelevisionComponent() {
 		<div
 			className="bg-black text-white"
 			style={{
-				minHeight: "100vh",
-				overflow: "visible",
-				height: "auto",
+				height: "100vh",
+				overflow: "hidden",
+				background: 'transparent'
 			}}
 		>
-			{/* Main Content Section */}
-			<div className="relative flex flex-col lg:flex-row min-h-screen">
-				{/* Image Section with Sliding Animation */}
-				<div className="flex-1 relative overflow-hidden">
-					{/* Section Title Indicator */}
-					<div className="absolute top-8 left-8 z-10">
-						<motion.div
-							key={`title-${activeCategory}`}
-							initial={{ opacity: 0, x: -20 }}
-							animate={{ opacity: 1, x: 0 }}
-							transition={{ duration: 0.8, ease: "easeOut" }}
-							className="bg-black/60 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20 shadow-lg shadow-white/20 bg-gradient-to-r from-white/10 to-white/5"
-							style={{
-								boxShadow:
-									"0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
-							}}
-						>
-							<h3 className="text-lg font-medium text-white drop-shadow-lg">Television</h3>
-						</motion.div>
-					</div>
-
-					<div className="absolute inset-0 flex items-center justify-center p-8">
-						<div className="relative w-full max-w-4xl aspect-video rounded-2xl overflow-hidden shadow-2xl">
+			{/* Main Top Navbar with TELEVISION Title */}
+		<nav className="w-full flex justify-center items-center fixed top-0 left-0 z-50 bg-black/10 backdrop-blur-md h-20 pt-4">
+				<h1
+					className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black m-0 p-0 tracking-tight leading-none break-words uppercase"
+					style={{
+						fontFamily: 'Philosopher, serif',
+						letterSpacing: '0.3em',
+						textRendering: 'optimizeLegibility',
+						color: '#4B2E19'
+					}}
+				>
+					TELEVISION
+				</h1>
+			</nav>
+			<div style={{ paddingTop: '5.5rem', height: 'calc(100vh - 5.5rem)', overflow: 'hidden', background: 'transparent' }}>
+				{/* Main Content Section */}
+				<div className="relative flex flex-col lg:flex-row min-h-screen">
+					{/* Image Section - left side on desktop */}
+					<div className="w-full lg:w-1/2 flex items-center justify-center px-0 py-0">
+					<div className="relative w-full max-w-2xl aspect-video overflow-hidden">
 							<AnimatePresence initial={false} custom={direction}>
 								<motion.div
 									key={activeCategory}
@@ -227,126 +213,109 @@ export default function TelevisionComponent() {
 									className="absolute inset-0"
 								>
 									<Image
-										src={getRandomImage()}
+										src={getOrderedImage(activeCategory)}
 										alt={`${currentCategory.name} content`}
 										fill
 										className="object-cover pointer-events-none"
 										priority
 									/>
-									<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-									{/* Overlay Content */}
-									<motion.div
-										className="absolute bottom-0 left-0 right-0 p-8"
-										initial={{ opacity: 0, y: 20 }}
-										animate={{ opacity: 1, y: 0 }}
-										transition={{ delay: 0.2, duration: 0.5 }}
-									>
-										<div className="mb-4">
-											<h2 className="text-3xl md:text-4xl font-bold mb-3">{currentCategory.title}</h2>
-										</div>
-
-										<div className="flex flex-wrap gap-2 mb-4">
-											{currentCategory.projects.map((project, index) => (
-												<motion.span
-													key={index}
-													className="px-2 py-1 bg-black/40 backdrop-blur-sm rounded text-xs"
-													initial={{ opacity: 0, scale: 0.8 }}
-													animate={{ opacity: 1, scale: 1 }}
-													transition={{ delay: 0.3 + index * 0.1, duration: 0.3 }}
-												>
-													{project}
-												</motion.span>
-											))}
-										</div>
-									</motion.div>
+									<div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
 								</motion.div>
 							</AnimatePresence>
 						</div>
 					</div>
-				</div>
 
-				{/* Side Panel for Mobile/Tablet */}
-				<div className="lg:hidden p-6 bg-gray-900/50 backdrop-blur-sm">
-					<motion.div
-						className="text-center"
-						key={`mobile-${activeCategory}`}
-						initial={{ opacity: 0, x: 20 }}
-						animate={{ opacity: 1, x: 0 }}
-						transition={{ duration: 0.5 }}
-					>
-						<h3 className="text-xl font-semibold mb-2">{currentCategory.title}</h3>
-						<p className="text-gray-300 text-sm">{currentCategory.description}</p>
-					</motion.div>
-				</div>
-			</div>
-
-			{/* Action Buttons Section */}
-			<div className="relative py-6 px-4">
-				<div className="max-w-4xl mx-auto flex justify-center">
-					<div className="flex gap-4 transition-all duration-[1.8s] ease-in-out flex-wrap">{renderActionButtons()}</div>
-				</div>
-			</div>
-
-			{/* Bottom Navigation Panel */}
-			<div className="relative py-8 px-4 bg-black/50 backdrop-blur-sm">
-				<div className="max-w-6xl mx-auto">
-					{/* Categories Navigation */}
-					<div className="flex items-center justify-center mb-6">
-						<div className="flex items-center space-x-6 bg-black/60 backdrop-blur-sm rounded-full px-6 py-3 flex-wrap">
-							{televisionCategories.map((category, index) => (
-								<motion.button
-									key={category.id}
-									onClick={() => handleCategoryChange(index)}
-									className={`relative px-4 py-2 text-sm font-medium transition-all duration-500 ${
-										activeCategory === index ? "text-white" : "text-gray-400 hover:text-gray-200"
-									}`}
-									whileHover={{
-										scale: 1.05,
-										transition: { duration: 0.3, ease: "easeOut" },
-									}}
-									whileTap={{
-										scale: 0.95,
-										transition: { duration: 0.1 },
-									}}
-									initial={{ opacity: 0, y: 10 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{
-										delay: index * 0.1,
-										duration: 0.6,
-										ease: "easeOut",
-									}}
-								>
-									{category.name}
-									{activeCategory === index && (
-										<motion.div
-											className="absolute bottom-0 left-0 right-0 h-0.5 bg-white rounded-full"
-											layoutId="activeTab"
-											transition={{
-												type: "spring",
-												stiffness: 150,
-												damping: 30,
-												duration: 1.2,
-											}}
-										/>
-									)}
-								</motion.button>
-							))}
+					{/* Content Section - right side on desktop */}
+					<div className="w-full lg:w-1/2 flex flex-col justify-center px-4 py-2">
+						{/* Category Navigation Tabs on Top */}
+						<div className="flex items-center justify-start mb-4">
+			<div className="flex items-center space-x-4 bg-black/10 backdrop-blur-sm rounded-full px-4 py-2 flex-wrap">
+								{televisionCategories.map((category, index) => (
+									<motion.button
+										key={category.id}
+										onClick={() => handleCategoryChange(index)}
+										className={`relative px-4 py-2 text-sm font-medium transition-all duration-500 ${
+											activeCategory === index ? "text-white" : "text-gray-400 hover:text-gray-200"
+										}`}
+										whileHover={{
+											scale: 1.05,
+											transition: { duration: 0.3, ease: "easeOut" },
+										}}
+										whileTap={{
+											scale: 0.95,
+											transition: { duration: 0.1 },
+										}}
+										initial={{ opacity: 0, y: 10 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{
+											delay: index * 0.1,
+											duration: 0.6,
+											ease: "easeOut",
+										}}
+									>
+										{category.name}
+										{activeCategory === index && (
+											<motion.div
+												className="absolute bottom-0 left-0 right-0 h-0.5 bg-white rounded-full"
+												layoutId="activeTab"
+												transition={{
+													type: "spring",
+													stiffness: 150,
+													damping: 30,
+													duration: 1.2,
+												}}
+											/>
+										)}
+									</motion.button>
+								))}
+							</div>
 						</div>
-					</div>
-
-					{/* Description Text Section */}
-					<div className="max-w-4xl mx-auto">
-						<div className="bg-black/40 backdrop-blur-sm rounded-xl p-6 transition-all duration-[1.8s] ease-in-out">
-							<div className="transition-all duration-[1.8s] ease-in-out">
+						<div className="mb-4">
+							<h2 className="text-3xl md:text-4xl font-bold mb-3">{currentCategory.title}</h2>
+						</div>
+			<div className="flex flex-wrap gap-2 mb-4">
+				{currentCategory.projects.map((project, index) => (
+					<motion.span
+						key={index}
+						className="px-2 py-1 bg-black/10 backdrop-blur-sm rounded text-xs"
+						initial={{ opacity: 0, scale: 0.8 }}
+						animate={{ opacity: 1, scale: 1 }}
+						transition={{ delay: 0.3 + index * 0.1, duration: 0.3 }}
+					>
+						{project}
+					</motion.span>
+				))}
+			</div>
+						<div className="mb-4">
+			<div className="bg-black/10 backdrop-blur-sm rounded-xl p-4 transition-all duration-[1.8s] ease-in-out" style={{background: 'rgba(0,0,0,0.05)'}}>
 								<p className="text-gray-300 text-base leading-relaxed transition-all duration-[1.8s] ease-in-out">
 									{currentCategory.description}
 								</p>
 							</div>
 						</div>
+						<div className="flex gap-4 transition-all duration-[1.8s] ease-in-out flex-wrap">{renderActionButtons()}</div>
 					</div>
 				</div>
 			</div>
+			<video
+				src="/images/about_bg.mp4"
+				autoPlay
+				loop
+				muted
+				playsInline
+				poster="/images/hero.jpg"
+				style={{
+					position: 'fixed',
+					top: 0,
+					left: 0,
+					width: '100vw',
+					height: '100vh',
+					objectFit: 'cover',
+					zIndex: -1,
+					pointerEvents: 'none',
+					background: 'transparent',
+				}}
+			/>
 		</div>
 	)
 }

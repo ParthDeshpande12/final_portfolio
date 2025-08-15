@@ -16,7 +16,7 @@ export default function Introduction() {
 	}, []);
 
 	return (
-		<div className="bg-gradient-to-b from-black to-[#181c23]" style={{background: "linear-gradient(to bottom, #000, #181c23 80%)"}}>
+		<div className="bg-transparent">
 			{/* Intro Images Section at the very start */}
 			<IntroImages />
 			<AboutMe />

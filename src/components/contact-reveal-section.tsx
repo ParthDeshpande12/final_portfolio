@@ -103,9 +103,9 @@ const ContactRevealSection = ({ className = "", portraitImage = "/portrait.png" 
         return tl
       }
 
-      // Initialize marquee with slower speed
-      const rollTl = roll(".marquee_line", { duration: 60 })
-      rollTl.timeScale(0.2)
+      // Initialize marquee with very slow speed
+      const rollTl = roll(".marquee_line", { duration: 180 })
+      rollTl.timeScale(0.05)
 
       // ScrollTrigger for marquee based on this section
       ScrollTrigger.create({
@@ -122,15 +122,15 @@ const ContactRevealSection = ({ className = "", portraitImage = "/portrait.png" 
           if (currentDirection !== direction) {
             direction = currentDirection
             gsap.to(rollTl, {
-              timeScale: direction * (0.2 + Math.abs(velocity) * 0.00005),
+              timeScale: direction * (0.05 + Math.abs(velocity) * 0.00001),
               duration: 0.8,
               ease: "power3.out",
               overwrite: true,
             })
           }
 
-          // Speed based on scroll progress and velocity (slower)
-          const speedMultiplier = 0.2 + Math.abs(velocity) * 0.00005
+          // Speed based on scroll progress and velocity (very slow)
+          const speedMultiplier = 0.05 + Math.abs(velocity) * 0.00001
           rollTl.timeScale(direction * speedMultiplier)
         },
       })
@@ -195,85 +195,85 @@ const ContactRevealSection = ({ className = "", portraitImage = "/portrait.png" 
         </div>
       </motion.div>
 
-      {/* Contact Info - Bottom Left */}
+      {/* Contact Info - Bottom Left - Mobile Responsive */}
       <motion.div
-        className="absolute bottom-32 left-16 z-30 max-w-lg"
+        className="absolute bottom-8 sm:bottom-16 md:bottom-32 left-4 sm:left-8 md:left-16 z-30 max-w-xs sm:max-w-sm md:max-w-lg"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
       >
-        <div className="space-y-5 text-black font-light">
-          <div className="text-lg leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.10)]" style={{textShadow: '0 2px 16px rgba(0,0,0,0.18)', fontFamily: 'Poppins, Quicksand, Arial, sans-serif', fontWeight: 500, letterSpacing: '0.01em'}}>
+        <div className="space-y-3 sm:space-y-4 md:space-y-5 text-black font-light">
+          <div className="text-sm sm:text-base md:text-lg leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.10)]" style={{textShadow: '0 2px 16px rgba(0,0,0,0.18)', fontFamily: 'Poppins, Quicksand, Arial, sans-serif', fontWeight: 500, letterSpacing: '0.01em'}}>
             <span className="font-medium">Location: </span>
             <span className="text-black/70">Mumbai (W)</span>
           </div>
-          <div className="text-lg leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.10)]" style={{textShadow: '0 2px 16px rgba(0,0,0,0.18)', fontFamily: 'Poppins, Quicksand, Arial, sans-serif', fontWeight: 500, letterSpacing: '0.01em'}}>
+          <div className="text-sm sm:text-base md:text-lg leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.10)]" style={{textShadow: '0 2px 16px rgba(0,0,0,0.18)', fontFamily: 'Poppins, Quicksand, Arial, sans-serif', fontWeight: 500, letterSpacing: '0.01em'}}>
             <span className="font-medium">Email: </span>
-            <span className="text-black/70">officialsumanrana@gmail.com</span>
+            <span className="text-black/70 break-all sm:break-normal">officialsumanrana@gmail.com</span>
           </div>
-          <div className="text-lg leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.10)]" style={{textShadow: '0 2px 16px rgba(0,0,0,0.18)', fontFamily: 'Poppins, Quicksand, Arial, sans-serif', fontWeight: 500, letterSpacing: '0.01em'}}>
+          <div className="text-sm sm:text-base md:text-lg leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.10)]" style={{textShadow: '0 2px 16px rgba(0,0,0,0.18)', fontFamily: 'Poppins, Quicksand, Arial, sans-serif', fontWeight: 500, letterSpacing: '0.01em'}}>
             <span className="font-medium">Phone: </span>
             <span className="text-black/70">91 837 799 0420</span>
           </div>
         </div>
 
-        {/* Social Icons - original position below contact info */}
-        <div className="flex items-center gap-8 pt-8 relative z-50">
+        {/* Social Icons - responsive grid */}
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 pt-4 sm:pt-6 md:pt-8 relative z-50">
           <a
             href="https://www.linkedin.com/in/sumanranaofficial/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 text-black/60 hover:text-blue-700 transition-all duration-300 font-light focus:outline-none"
+            className="flex items-center gap-2 sm:gap-3 text-black/60 hover:text-blue-700 transition-all duration-300 font-light focus:outline-none"
             tabIndex={0}
             style={{ pointerEvents: 'auto' }}
           >
-            <FaLinkedin size={28} />
-            <span className="text-base">LinkedIn</span>
+            <FaLinkedin size={20} className="sm:w-6 sm:h-6 md:w-7 md:h-7" />
+            <span className="text-xs sm:text-sm md:text-base">LinkedIn</span>
           </a>
           <a
             href="https://www.youtube.com/@sumanranaofficial"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 text-black/60 hover:text-red-600 transition-all duration-300 font-light focus:outline-none"
+            className="flex items-center gap-2 sm:gap-3 text-black/60 hover:text-red-600 transition-all duration-300 font-light focus:outline-none"
             tabIndex={0}
             style={{ pointerEvents: 'auto' }}
           >
-            <FaYoutube size={28} />
-            <span className="text-base">YouTube</span>
+            <FaYoutube size={20} className="sm:w-6 sm:h-6 md:w-7 md:h-7" />
+            <span className="text-xs sm:text-sm md:text-base">YouTube</span>
           </a>
           <a
             href="https://www.facebook.com/sumanranaofficial"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 text-black/60 hover:text-blue-500 transition-all duration-300 font-light focus:outline-none"
+            className="flex items-center gap-2 sm:gap-3 text-black/60 hover:text-blue-500 transition-all duration-300 font-light focus:outline-none"
             tabIndex={0}
             style={{ pointerEvents: 'auto' }}
           >
-            <FaFacebook size={28} />
-            <span className="text-base">Facebook</span>
+            <FaFacebook size={20} className="sm:w-6 sm:h-6 md:w-7 md:h-7" />
+            <span className="text-xs sm:text-sm md:text-base">Facebook</span>
           </a>
           <a
             href="https://www.instagram.com/sumanranaactor"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 text-black/60 hover:text-pink-600 transition-all duration-300 font-light focus:outline-none"
+            className="flex items-center gap-2 sm:gap-3 text-black/60 hover:text-pink-600 transition-all duration-300 font-light focus:outline-none"
             tabIndex={0}
             style={{ pointerEvents: 'auto' }}
           >
-            <FaInstagram size={28} />
-            <span className="text-base">Instagram</span>
+            <FaInstagram size={20} className="sm:w-6 sm:h-6 md:w-7 md:h-7" />
+            <span className="text-xs sm:text-sm md:text-base">Instagram</span>
           </a>
           {/* IMDB Button */}
           <a
             href="https://www.imdb.com/name/nm14409813/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 text-black/60 hover:text-yellow-500 transition-all duration-300 font-light focus:outline-none"
+            className="flex items-center gap-2 sm:gap-3 text-black/60 hover:text-yellow-500 transition-all duration-300 font-light focus:outline-none col-span-2 sm:col-span-1"
             tabIndex={0}
             style={{ pointerEvents: 'auto' }}
           >
-            <SiImdb size={28} />
-            <span className="text-base">IMDB</span>
+            <SiImdb size={20} className="sm:w-6 sm:h-6 md:w-7 md:h-7" />
+            <span className="text-xs sm:text-sm md:text-base">IMDB</span>
           </a>
         </div>
       </motion.div>

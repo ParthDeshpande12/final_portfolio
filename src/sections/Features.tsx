@@ -1,11 +1,12 @@
-"use client";
-
+import { AnimatedContainer } from "@/components/AnimatedContainer";
 import { ProjectsSection } from "@/components/projects-section";
 
 export default function Features() {
-	return (
-		<section id="features" className="h-auto w-full mb-12 md:mb-16 pb-16" style={{ minHeight: 'fit-content' }}>
-			<ProjectsSection />
-		</section>
-	);
+  return (
+	<AnimatedContainer variant="fade" className="h-auto w-full">
+	  <div style={{ minHeight: 'fit-content' }}>
+		<ProjectsSection />
+	  </div>
+	</AnimatedContainer>
+  );
 }

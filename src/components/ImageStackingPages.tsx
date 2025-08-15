@@ -1,174 +1,131 @@
 "use client";
-
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ApertureHoverCard from "@/components/ApertureHoverCard";
-import TextRevealWithBold from "@/components/TextRevealWithBold";
+import Image from "next/image";
 
 if (typeof window !== "undefined") {
-	gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger);
 }
 
-interface StickySection {
-	id: string;
-	title: string;
-	description: string;
-	image: string;
-	backgroundColor: string;
-}
+export default function ImageStackingPages() {
+  const pinWrapRef = useRef<HTMLDivElement>(null);
+  const sectionPinRef = useRef<HTMLDivElement>(null);
 
-interface StickyScrollProps {
-	sections: StickySection[];
-}
+  useEffect(() => {
+    const pinWrap = pinWrapRef.current;
+    const sectionPin = sectionPinRef.current;
 
-export default function StickyScroll({ sections }: StickyScrollProps) {
-	const containerRef = useRef<HTMLDivElement>(null);
-	const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+    if (!pinWrap || !sectionPin) return;
 
-	useEffect(() => {
-		const ctx = gsap.context(() => {
-			// Pin each section
-			const stickyElements = gsap.utils.toArray<HTMLElement>(".sticky-section");
+    const pinWrapWidth = pinWrap.scrollWidth;
+    const horizontalScrollLength = pinWrapWidth - window.innerWidth;
 
-			stickyElements.forEach((section) => {
-				ScrollTrigger.create({
-					trigger: section,
-					start: "top top",
-					end: "bottom top",
-					pin: true,
-					pinSpacing: false,
-				});
-			});
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionPin,
+          pin: true,
+          scrub: 1,
+          start: "top top",
+          end: () => `+=${horizontalScrollLength}`,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+        },
+      });
 
-			// Zoom effect for each image on scroll
-			imageRefs.current.forEach((img, idx) => {
-				if (!img) return;
-				if (idx === 2) {
-					// Third image: less zoom, shorter scroll
-					gsap.fromTo(
-						img,
-						{ scale: 1 },
-						{
-							scale: 1.03,
-							ease: "none",
-							scrollTrigger: {
-								trigger: stickyElements[idx],
-								start: "top top",
-								end: "bottom-=20% top",
-								scrub: true,
-							},
-						}
-					);
-				} else {
-					gsap.fromTo(
-						img,
-						{ scale: 1 },
-						{
-							scale: 1.08,
-							ease: "none",
-							scrollTrigger: {
-								trigger: stickyElements[idx],
-								start: "top top",
-								end: "bottom top",
-								scrub: true,
-							},
-						}
-					);
-				}
-			});
+      tl.to(pinWrap, {
+        x: -horizontalScrollLength,
+        ease: "none",
+      });
+    }, sectionPin);
 
-			// Simple fade in animations
-			gsap.utils.toArray<HTMLElement>(".animate-in").forEach((element) => {
-				gsap.fromTo(
-					element,
-					{ opacity: 0, y: 50 },
-					{
-						opacity: 1,
-						y: 0,
-						duration: 0.8,
-						ease: "power2.out",
-						scrollTrigger: {
-							trigger: element,
-							start: "top 80%",
-							toggleActions: "play none none reverse",
-						},
-					},
-				);
-			});
-		}, containerRef);
+    return () => {
+      ctx.revert();
+    };
+  }, []);
 
-		return () => {
-			ctx.revert();
-			ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-		};
-	}, []);
-
-	return (
-		<div ref={containerRef} className="relative">
-			{sections.map((section, index) => (
-				<div
-					key={section.id}
-					className={`sticky-section min-h-screen flex items-center justify-between px-2 md:px-8 lg:px-12 ${section.backgroundColor}`}
-				>
-					{/* For the second section (index 1), show image first, then content */}
-					{index === 1 ? (
-						<>
-							{/* Image Side - Left (Larger) */}
-							<div className="flex-1 flex justify-start">
-								<div
-									ref={el => { imageRefs.current[index] = el }}
-									className="will-change-transform w-full max-w-2xl h-[600px] md:h-[700px] flex items-center translate-y-16"
-								>
-									<ApertureHoverCard
-										imageSrc={section.image}
-										imageAlt={section.title}
-										title={section.title}
-										date={"2024-06-01"}
-										className="w-full h-full"
-									/>
-								</div>
-							</div>
-
-							{/* Content Side - Right (Smaller) */}
-							<div className="flex-1 max-w-xl ml-8 flex flex-col justify-center items-center md:items-start text-left">
-								<TextRevealWithBold
-									text={section.description}
-									className="text-white font-philosopher mb-4 text-2xl md:text-3xl leading-snug"
-								/>
-							</div>
-						</>
-					) : (
-						<>
-							{/* Content Side - Left (Smaller) */}
-							<div className="flex-1 max-w-xl flex flex-col justify-center items-center md:items-start text-left">
-								<TextRevealWithBold
-									text={section.description}
-									className="text-white font-philosopher mb-4 text-2xl md:text-3xl leading-snug"
-								/>
-							</div>
-
-							{/* Image Side - Right (Larger) */}
-							<div className="flex-1 flex justify-end">
-								<div
-									ref={el => { imageRefs.current[index] = el }}
-									className="will-change-transform w-full max-w-2xl h-[600px] md:h-[700px] flex items-center translate-y-16"
-								>
-									<ApertureHoverCard
-										imageSrc={section.image}
-										imageAlt={section.title}
-										title={section.title}
-										date={"2024-06-01"}
-										className="w-full h-full"
-									/>
-								</div>
-							</div>
-						</>
-					)}
-				</div>
-			))}
-			{/* Add spacing at the end to prevent overlap */}
-			<div className="h-screen"></div>
-		</div>
-	);
+  return (
+    <section
+      id="sectionPin"
+      ref={sectionPinRef}
+      style={{
+        height: "100vh",
+        overflow: "hidden",
+        position: "relative",
+        background: "var(--text-color, #111)",
+        color: "var(--bg-color, #b9b3a9)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        isolation: "isolate",
+      }}
+    >
+      <div
+        ref={pinWrapRef}
+        className="pin-wrap"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          height: "100vh",
+          padding: "50px 10vw",
+        }}
+      >
+        <h2
+          style={{
+            fontSize: "2rem",
+            maxWidth: "400px",
+            minWidth: "60vw",
+            padding: "0 5vw",
+            flexShrink: 0,
+          }}
+        >
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </h2>
+        <Image
+          src="/images/a.png"
+          alt="Portfolio Image A"
+          width={800}
+          height={1200}
+          style={{
+            height: "80vh",
+            width: "auto",
+            objectFit: "cover",
+            minWidth: "300px",
+            borderRadius: "2em",
+            boxShadow: "0 4px 24px 0 rgba(36, 33, 36, 0.08)",
+          }}
+        />
+        <Image
+          src="/images/b.png"
+          alt="Portfolio Image B"
+          width={800}
+          height={1200}
+          style={{
+            height: "80vh",
+            width: "auto",
+            objectFit: "cover",
+            minWidth: "300px",
+            borderRadius: "2em",
+            boxShadow: "0 4px 24px 0 rgba(36, 33, 36, 0.08)",
+          }}
+        />
+        <Image
+          src="/images/c.png"
+          alt="Portfolio Image C"
+          width={800}
+          height={1200}
+          style={{
+            height: "80vh",
+            width: "auto",
+            objectFit: "cover",
+            minWidth: "300px",
+            borderRadius: "2em",
+            boxShadow: "0 4px 24px 0 rgba(36, 33, 36, 0.08)",
+          }}
+        />
+      </div>
+    </section>
+  );
 }

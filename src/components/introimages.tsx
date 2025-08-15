@@ -1,171 +1,251 @@
-"use client"
+"use client";
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
 
-import Image from "next/image"
-import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef } from "react"
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function IntroImages() {
-  const imageContainerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: imageContainerRef,
-    offset: ["start end", "end start"],
-  })
+  const pinWrapRef = useRef<HTMLDivElement>(null);
+  const sectionPinRef = useRef<HTMLDivElement>(null);
+  const textContainerRef = useRef<HTMLDivElement>(null);
+  const sushriRef = useRef<HTMLDivElement>(null);
+  const sumanRef = useRef<HTMLDivElement>(null);
+  const ranaRef = useRef<HTMLDivElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
 
-  // Use direct scrollYProgress instead of spring to avoid interference
-  // const smoothProgress = useSpring(scrollYProgress, {
-  //   stiffness: 400,
-  //   damping: 40
-  // })
+  useEffect(() => {
+    const pinWrap = pinWrapRef.current;
+    const sectionPin = sectionPinRef.current;
+    
+    if (!pinWrap || !sectionPin) return;
 
-  // STOP zooming completely once it fills the screen (back to original)
-  const volunteerScale = useTransform(scrollYProgress, [0, 0.3, 0.4, 1], [1, 1, 2.5, 2.5])
-  const volunteerZIndex = useTransform(scrollYProgress, [0, 0.3, 1], [1, 1, 50])
+    // Calculate the scroll distance more precisely
+    const pinWrapWidth = pinWrap.scrollWidth;
+    const horizontalScrollLength = pinWrapWidth - window.innerWidth;
 
-  // Push surrounding images away as center image zooms (back to original)
-  const leftImagesPush = useTransform(scrollYProgress, [0, 0.3, 0.4, 1], [0, 0, -200, -200])
-  const rightImagesPush = useTransform(scrollYProgress, [0, 0.3, 0.4, 1], [0, 0, 200, 200])
-  const sideImagesScale = useTransform(scrollYProgress, [0, 0.3, 0.4, 1], [1, 1, 0.8, 0.8])
+    const ctx = gsap.context(() => {
+      // Set initial states for text elements - very subtle
+      gsap.set([sushriRef.current, sumanRef.current, ranaRef.current], {
+        opacity: 0,
+        y: 20
+      });
 
-  // Surprise text animation - appears AFTER zoom completes (back to original)
-  const textOpacity = useTransform(scrollYProgress, [0, 0.4, 0.45, 1], [0, 0, 1, 1])
-  const textScale = useTransform(scrollYProgress, [0, 0.4, 0.45, 1], [0.5, 0.5, 1, 1])
-  const textY = useTransform(scrollYProgress, [0, 0.4, 0.45, 1], [50, 50, 0, 0])
+      gsap.set(subtitleRef.current, {
+        opacity: 0,
+        y: 15
+      });
+
+      // Simple, elegant text reveal animation
+      const textRevealTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: textContainerRef.current,
+          start: "left center",
+          end: "right center",
+          scrub: false,
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // Clean, subtle staggered reveal
+      textRevealTl
+        .to(sushriRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out"
+        })
+        .to(sumanRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out"
+        }, "-=0.6")
+        .to(ranaRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out"
+        }, "-=0.6")
+        .to(subtitleRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out"
+        }, "-=0.3");
+
+      // Horizontal scroll animation
+      const horizontalTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionPin,
+          pin: true,
+          scrub: 1,
+          start: "top top",
+          end: () => `+=${horizontalScrollLength}`,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+        }
+      });
+
+      horizontalTl.to(pinWrap, {
+        x: -horizontalScrollLength,
+        ease: "none"
+      });
+
+    }, sectionPin);
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
 
   return (
-    <section className="h-[150vh] bg-[#181a1b] relative" ref={imageContainerRef}>
-      {/* Sticky container that holds the images */}
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-        {/* Image Grid with Zoom Effect */}
-        <div className="w-full">
-          <div className="flex h-[500px] w-full">
-            {/* Far Left - GETS PUSHED LEFT */}
-            <motion.div
-              className="w-[200px] -ml-32"
-              style={{
-                x: leftImagesPush,
-                scale: sideImagesScale,
-              }}
-            >
-              <div className="relative h-full rounded-2xl overflow-hidden">
-                <Image
-                  src="/images/1.jpg"
-                  alt="Left image 1"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </motion.div>
-
-            {/* Second Column - GETS PUSHED LEFT */}
-            <motion.div
-              className="flex-1 min-w-0 flex flex-col gap-4 mx-8"
-              style={{
-                x: leftImagesPush,
-                scale: sideImagesScale,
-              }}
-            >
-              <div className="relative flex-1 rounded-2xl overflow-hidden">
-                <Image
-                  src="/images/2.jpg"
-                  alt="Left image 2"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative flex-1 rounded-2xl overflow-hidden">
-                <Image
-                  src="/images/3.jpg"
-                  alt="Left image 3"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </motion.div>
-
-            {/* Center - ZOOM STOPS AT FULL SCREEN */}
-            <motion.div
-              className="flex-[2.5] min-w-0 mx-4 relative"
-              id="volunteer-section"
-              style={{
-                scale: volunteerScale,
-                zIndex: volunteerZIndex,
-                transformOrigin: "center center",
-              }}
-            >
-              <div className="relative h-full rounded-2xl overflow-hidden">
-                <Image
-                  src="/images/1.jpg"
-                  alt="Center image"
-                  fill
-                  className="object-cover object-center"
-                  priority
-                  quality={95}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
-                />
-              </div>
-            </motion.div>
-
-            {/* Fourth Column - GETS PUSHED RIGHT */}
-            <motion.div
-              className="flex-1 min-w-0 flex flex-col gap-4 mx-8"
-              style={{
-                x: rightImagesPush,
-                scale: sideImagesScale,
-              }}
-            >
-              <div className="relative flex-1 rounded-2xl overflow-hidden">
-                <Image
-                  src="/images/2.jpg"
-                  alt="Right image 2"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative flex-1 rounded-2xl overflow-hidden">
-                <Image
-                  src="/images/3.jpg"
-                  alt="Right image 3"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </motion.div>
-
-            {/* Far Right - GETS PUSHED RIGHT */}
-            <motion.div
-              className="w-[200px] -mr-32"
-              style={{
-                x: rightImagesPush,
-                scale: sideImagesScale,
-              }}
-            >
-              <div className="relative h-full rounded-2xl overflow-hidden">
-                <Image
-                  src="/images/1.jpg"
-                  alt="Right image 1"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* SURPRISE TEXT - POSITIONED RELATIVE TO VIEWPORT */}
-        <motion.div
-          className="absolute bottom-16 right-16 z-[100]"
+    <section
+      id="sectionPin"
+      ref={sectionPinRef}
+      style={{
+        height: "100vh",
+        overflow: "hidden",
+        position: "relative",
+        background: "#111",
+        color: "#b9b3a9",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        isolation: "isolate", // Contain the effect
+      }}
+    >
+      <div
+        ref={pinWrapRef}
+        className="pin-wrap"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          height: "100vh",
+          padding: "0 5vw",
+          gap: "5vw",
+          minWidth: "100vw",
+        }}
+      >
+        <div
+          ref={textContainerRef}
           style={{
-            opacity: textOpacity,
-            scale: textScale,
-            y: textY,
+            maxWidth: "400px",
+            minWidth: "60vw",
+            padding: "0 5vw",
+            flexShrink: 0,
+            lineHeight: 1.4,
+            position: "relative",
+            overflow: "visible"
           }}
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] stroke-black">
-            <span className="inline-block w-16 h-1 bg-white mr-4 align-middle drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"></span>
-            where care drives change.
-          </h2>
-        </motion.div>
+          <div
+            style={{
+              fontSize: "7.2rem",
+              fontWeight: "300",
+              letterSpacing: "0.1em",
+              marginBottom: "2.4rem",
+              color: "#f5f0e8",
+              fontFamily: "'Noto Serif Devanagari', 'Siddhanta', 'Uttara', serif",
+              position: "relative"
+            }}
+          >
+            <div 
+              ref={sushriRef}
+              style={{ 
+                display: "block", 
+                fontSize: "4.8rem", 
+                color: "#b9b3a9", 
+                marginBottom: "0.5rem",
+                position: "relative",
+                filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))"
+              }}
+            >
+              सुश्री
+            </div>
+            <div 
+              ref={sumanRef}
+              style={{ 
+                display: "block",
+                position: "relative",
+                filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))"
+              }}
+            >
+              Suman
+            </div>
+            <div 
+              ref={ranaRef}
+              style={{ 
+                display: "block", 
+                color: "#b9b3a9",
+                position: "relative",
+                filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))"
+              }}
+            >
+              Rana
+            </div>
+          </div>
+          <p
+            ref={subtitleRef}
+            style={{
+              fontSize: "2.88rem",
+              fontWeight: "300",
+              color: "#b9b3a9",
+              letterSpacing: "0.05em",
+              fontFamily: "'Noto Serif Devanagari', 'Siddhanta', 'Uttara', serif",
+              position: "relative",
+              filter: "drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25))"
+            }}
+          >
+            Actor . Doctor . Entrepreneur
+          </p>
+        </div>
+        <Image
+          src="/images/1.jpg"
+          alt="Portfolio Image 1"
+          width={800}
+          height={1200}
+          style={{
+            height: "80vh",
+            width: "auto",
+            objectFit: "cover",
+            minWidth: "300px",
+            borderRadius: "2em",
+            boxShadow: "0 4px 24px 0 rgba(36, 33, 36, 0.08)",
+          }}
+        />
+        <Image
+          src="/images/2.jpg"
+          alt="Portfolio Image 2"
+          width={800}
+          height={1200}
+          style={{
+            height: "80vh",
+            width: "auto",
+            objectFit: "cover",
+            minWidth: "300px",
+            borderRadius: "2em",
+            boxShadow: "0 4px 24px 0 rgba(36, 33, 36, 0.08)",
+          }}
+        />
+        <Image
+          src="/images/3.jpg"
+          alt="Portfolio Image 3"
+          width={800}
+          height={1200}
+          style={{
+            height: "80vh",
+            width: "auto",
+            objectFit: "cover",
+            minWidth: "300px",
+            borderRadius: "2em",
+            boxShadow: "0 4px 24px 0 rgba(36, 33, 36, 0.08)",
+          }}
+        />
       </div>
     </section>
-  )
+  );
 }
