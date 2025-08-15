@@ -212,9 +212,9 @@ export default function IntroImages() {
             height: "80vh",
             width: "auto",
             objectFit: "cover",
-            minWidth: "300px",
-            borderRadius: "2em",
-            boxShadow: "0 4px 24px 0 rgba(36, 33, 36, 0.08)",
+            minWidth: "60vw",
+            padding: "0 5vw",
+            flexShrink: 0,
           }}
         />
         <Image
@@ -226,9 +226,9 @@ export default function IntroImages() {
             height: "80vh",
             width: "auto",
             objectFit: "cover",
-            minWidth: "300px",
-            borderRadius: "2em",
-            boxShadow: "0 4px 24px 0 rgba(36, 33, 36, 0.08)",
+            minWidth: "60vw",
+            padding: "0 5vw",
+            flexShrink: 0,
           }}
         />
         <Image
@@ -240,9 +240,9 @@ export default function IntroImages() {
             height: "80vh",
             width: "auto",
             objectFit: "cover",
-            minWidth: "300px",
-            borderRadius: "2em",
-            boxShadow: "0 4px 24px 0 rgba(36, 33, 36, 0.08)",
+            minWidth: "60vw",
+            padding: "0 5vw",
+            flexShrink: 0,
           }}
         />
       </div>
